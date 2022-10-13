@@ -1,0 +1,49 @@
+/* Here is your custom css styles. */
+#headNav{
+    background-color: transparent!important;
+}
+.bg-cover:before, .bg-cover:after {
+    display: none!important;
+}
+.brand{
+    margin-top: 100px;
+}
+.description{
+    color: aqua !important;
+}
+#main-content{
+    margin-top: 150px;
+}
+.logo-span{
+    color:aqua;
+}
+.page-footer{
+    background-color: #7db7ba;
+}
+.content{
+    margin-top: 100px;
+}
+.card{
+
+}
+.card{
+    background: linear-gradient(-45deg, #e8e6d7, #f2f8f8, #cdbc7e);
+    animation: gradientBG 15s ease infinite;
+    background-size: 400% 400%;
+}
+#mobile-nav{
+    background-color: rgb(77, 173, 199);
+}
+
+@keyframes gradientBG{
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
