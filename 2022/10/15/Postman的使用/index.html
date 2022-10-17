@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Echart笔记, 小田＇s Blog">
+    <meta name="keywords" content="Postman的基本使用, 小田＇s Blog">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Echart笔记 | 小田＇s Blog</title>
+    <title>Postman的基本使用 | 小田＇s Blog</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -208,7 +208,7 @@
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Echart笔记</h1>
+                    <h1 class="description center-align post-title">Postman的基本使用</h1>
                 </div>
             </div>
         </div>
@@ -345,7 +345,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2022-10-12
+                    2022-10-15
                 </div>
                 
 
@@ -366,31 +366,83 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="Ⅰ-实现Echart折线图防抖自适应"><a href="#Ⅰ-实现Echart折线图防抖自适应" class="headerlink" title="Ⅰ-实现Echart折线图防抖自适应"></a>Ⅰ-实现Echart折线图防抖自适应</h2><blockquote>
-<ol>
-<li><p>当我需要让Echart的折线图根据当前页面大小发生变化,并且进行防抖处理节约性能</p>
-</li>
-<li><p>分析:</p>
-<ol>
-<li>利用<code>柯里化</code>与<code>高阶函数</code>的知识点写防抖函数</li>
-<li>利用<code>Echart</code>的 <code>resize()</code>刷新函数进行适配</li>
-</ol>
-</li>
-<li><p>代码示例</p>
-<ol>
-<li>防抖函数代码</li>
-</ol>
-</li>
-</ol>
- <figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 防抖进行echart自适应</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> chartDom  传入 echarts.init(chartDom);生成的对象</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">debounceEchartResize = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> timers </span><br><span class="line">  <span class="keyword">return</span> <span class="function">(<span class="params">chartDom,interval:number</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (timers) <span class="built_in">clearTimeout</span>(timers);</span><br><span class="line">    timers = <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123; <span class="comment">// 只执行最后一个定时器的 结果</span></span><br><span class="line">      chartDom.<span class="title function_">resize</span>()</span><br><span class="line">    &#125;, interval); <span class="comment">// 推迟 300 ms 在执行resize 效果 </span></span><br><span class="line">    <span class="comment">// return timer</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ol start="2">
-<li>js调用 –&gt;本代码在React hooks 中使用</li>
-</ol>
- <figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; tool &#125; <span class="keyword">from</span> <span class="string">&#x27;~/utils/Tool&#x27;</span></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">SaleSumInfo</span> = (<span class="params">props: IProps</span>) =&gt; &#123;</span><br><span class="line"> <span class="comment">//柯里化调用防抖自适应,在此处第一次调用,会生成timer,这样就不会因为在副作用函数中</span></span><br><span class="line">  <span class="comment">//因为重复渲染而重置</span></span><br><span class="line">  <span class="keyword">const</span> debounceResize = tool.<span class="title function_">debounceEchartResize</span>()</span><br><span class="line"></span><br><span class="line">  <span class="comment">//副作用函数,作用是react的生命周期</span></span><br><span class="line">  <span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> chartDom = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;main&#x27;</span>);</span><br><span class="line">    <span class="keyword">const</span> myChart = echarts.<span class="title function_">init</span>(chartDom);</span><br><span class="line">     <span class="comment">//形成闭包,同时防止监听事件运行两次回调函数</span></span><br><span class="line">     <span class="keyword">const</span> <span class="title function_">resizeFunc</span>=(<span class="params"></span>)=&gt;<span class="title function_">debounceResize</span>(myChart,<span class="number">300</span>)</span><br><span class="line">     <span class="comment">//创建监听事件</span></span><br><span class="line">     <span class="variable language_">window</span>.<span class="title function_">addEventListener</span>(<span class="string">&quot;resize&quot;</span>,resizeFunc) </span><br><span class="line">      <span class="comment">//销毁的生命周期 进行监听卸载</span></span><br><span class="line">  	 <span class="keyword">return</span> <span class="function">()=&gt;</span>&#123;</span><br><span class="line">      <span class="variable language_">window</span>.<span class="title function_">removeEventListener</span>(<span class="string">&quot;resize&quot;</span>,resizeFunc)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">   	<span class="comment">//渲染函数</span></span><br><span class="line">    <span class="keyword">return</span> ()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+                <h1 id="Postman使用"><a href="#Postman使用" class="headerlink" title="Postman使用"></a>Postman使用</h1><h2 id="一、Postman背景介绍"><a href="#一、Postman背景介绍" class="headerlink" title="一、Postman背景介绍"></a>一、Postman背景介绍</h2><blockquote>
+<p>用户在开发或者调试网络程序或者是网页B/S模式的程序的时候是需要一些方法来跟踪网页请求的，用户可以使用一些网络的监视工具比如著名的Firebug等网页调试工具。今天给大家介绍的这款网页调试工具不仅可以调试简单的css、html、脚本等简单的网页基本信息，它还可以发送几乎所有类型的HTTP请求！Postman在发送网络HTTP请求方面可以说是Chrome插件类产品中的代表产品之一。</p>
 </blockquote>
-<p>)</p>
+<h2 id="二、Postman的操作环境"><a href="#二、Postman的操作环境" class="headerlink" title="二、Postman的操作环境"></a>二、Postman的操作环境</h2><p>postman适用于不同的操作系统，Postman Mac、Windows X32、Windows X64、Linux系统，还支持postman 浏览器扩展程序、postman chrome应用程序等。</p>
+<p>Postman使用参考文档：</p>
+<p>1.官方英文文档<a target="_blank" rel="noopener" href="https://www.getpostman.com/docs/v6/">https://www.getpostman.com/docs/v6/</a></p>
+<p>2.chrome插件整理的 postman中文使用教程 <a target="_blank" rel="noopener" href="http://chromecj.com/web-development/2017-12/870.html">http://chromecj.com/web-development/2017-12/870.html</a></p>
+<h2 id="三、Postman下载安装"><a href="#三、Postman下载安装" class="headerlink" title="三、Postman下载安装"></a>三、Postman下载安装</h2><h3 id="1-gt-、postman下载地址："><a href="#1-gt-、postman下载地址：" class="headerlink" title="1&gt; 、postman下载地址："></a>1&gt; 、postman下载地址：</h3><p>1.Postman for MAC</p>
+<p>2.Postman for windows X64</p>
+<p>3.Postman for windows X86</p>
+<p>4.Postman for linux X64</p>
+<p>5.Postman for Linux X86</p>
+<h3 id="2-gt-Postman官网下载地址："><a href="#2-gt-Postman官网下载地址：" class="headerlink" title="2&gt;. Postman官网下载地址："></a>2&gt;. Postman官网下载地址：</h3><p><a target="_blank" rel="noopener" href="https://www.getpostman.com/apps">https://www.getpostman.com/apps</a></p>
+<h3 id="3-Postman安装"><a href="#3-Postman安装" class="headerlink" title="3.Postman安装"></a>3.Postman安装</h3><blockquote>
+<p>postman的安装方法分好几种，按照我们上文介绍的那样，我们分为三种安装模式介绍：</p>
+</blockquote>
+<h4 id="1、chrome浏览器postman-插件安装"><a href="#1、chrome浏览器postman-插件安装" class="headerlink" title="1、chrome浏览器postman 插件安装"></a>1、chrome浏览器postman 插件安装</h4><blockquote>
+<p>postman谷歌浏览器的安装插件，所以说它的使用前提是你的电脑上得安装谷歌浏览器才行，在安装了谷歌浏览器后还需要在谷歌网上应用店中下载所需要的Postman插件，该插件的下载方式如下：</p>
+</blockquote>
+<p><img src="https://img-blog.csdnimg.cn/20181030002023904.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2Z4YmluMTIz,size_16,color_FFFFFF,t_70" alt="avatar"></p>
+<blockquote>
+<p>不能访问google 应用上商店的朋友 可以 参考这里， 或者下载客户端版本</p>
+</blockquote>
+<h4 id="2-Postman电脑客户端安装"><a href="#2-Postman电脑客户端安装" class="headerlink" title="2.Postman电脑客户端安装"></a>2.Postman电脑客户端安装</h4><p>1).macOS安装<br>一旦你下载的应用程序，你可以拖动文件到“应用程序”文件夹。 双击Postman打开应用程序。</p>
+<p>2).Windows安装<br>下载安装文件<br>运行安装程序<br>3). Linux安装<br>我没有试过，但是找了一些参考资料( 有兴趣的朋友可以自行实验)<br>ubuntu安装postman: <a target="_blank" rel="noopener" href="https://blog.csdn.net/qianmosolo/article/details/79353632">https://blog.csdn.net/qianmosolo/article/details/79353632</a><br>Ubuntu16.04上安装Postman应用程序: <a target="_blank" rel="noopener" href="https://blog.bluematador.com/posts/postman-how-to-install-on-ubuntu-1604/?utm_source=hootsuite&amp;utm_medium=twitter&amp;utm_campaign=">https://blog.bluematador.com/posts/postman-how-to-install-on-ubuntu-1604/?utm_source=hootsuite&amp;utm_medium=twitter&amp;utm_campaign=</a></p>
+<h2 id="四、Postman的基础功能"><a href="#四、Postman的基础功能" class="headerlink" title="四、Postman的基础功能"></a>四、Postman的基础功能</h2><p><img src="https://img-blog.csdn.net/20180523232921542?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2Z4YmluMTIz/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="avatar"></p>
+<h2 id="五、接口请求流程"><a href="#五、接口请求流程" class="headerlink" title="五、接口请求流程"></a>五、接口请求流程</h2><blockquote>
+<ol>
+<li>GET 请求<br>GET请求：点击Params，输入参数及value，可输入多个，即时显示在URL链接上，<br>所以，GET请求的请求头与请求参数如在接口文档中无特别声明时，可以不填。<br><img src="https://img-blog.csdn.net/20180523233825152?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2Z4YmluMTIz/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="avatar"></li>
+</ol>
+</blockquote>
+<p>响应示例： 这里会有请求的响应状态码，响应时间，以及响应大小</p>
+<p><img src="https://img-blog.csdn.net/20180523234132434?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2Z4YmluMTIz/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="avatar"></p>
+<p>响应体示例： 响应的格式可以有多种，我这里由于请求的是 百度，so, 响应的是 html ,一般情况下，我们自定义接口的话是 json格式的响应体</p>
+<p><img src="https://img-blog.csdn.net/20180523234247147?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2Z4YmluMTIz/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="avatar"></p>
+<blockquote>
+<ol start="2">
+<li>POST请求<br>POST请求一：表单提交</li>
+</ol>
+</blockquote>
+<p>下图示例中设置了请求方法，请求URL，请求参数，但是没有设置请求头<br>在我的使用过程中，请求头是根据请求参数的形式自动生成的<br>请求头中的Content-Type与请求参数的格式之间是有关联关系，比如：</p>
+<p><img src="https://img-blog.csdn.net/20180524000345232?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2Z4YmluMTIz/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="avatar"></p>
+<p><img src="https://img-blog.csdn.net/20180523234739215?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2Z4YmluMTIz/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="avatar"></p>
+<p><img src="https://img-blog.csdn.net/20180523234748383?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2Z4YmluMTIz/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="avatar"></p>
+<blockquote>
+<p>POST请求二：json提交<br>下图中，当我们选择JSON(application/json) 是会自动帮我们设置 headers 为 application/json<br>在这里就不截图 举例了，朋友们可以自行去查看</p>
+</blockquote>
+<p><img src="https://img-blog.csdn.net/2018052400054291?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2Z4YmluMTIz/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="avatar"></p>
+<blockquote>
+<p>POST请求三：xml提交</p>
+</blockquote>
+<p><img src="https://img-blog.csdn.net/20180524000901598?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2Z4YmluMTIz/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="avatar"></p>
+<blockquote>
+<p>POST请求四：二进制文件提交</p>
+</blockquote>
+<p><img src="https://img-blog.csdn.net/20180524001010654?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2Z4YmluMTIz/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="avatar"></p>
+<p>其它请求方式如PUT,DELETE 大致流程和GET,POST 差不多，这里就不一一举例说明了</p>
+<h2 id="六、身份验证Authentication"><a href="#六、身份验证Authentication" class="headerlink" title="六、身份验证Authentication"></a>六、身份验证Authentication</h2><blockquote>
+<p>1、Basic Auth</p>
+</blockquote>
+<p>是基础的验证，所以会比较简单<br>会直接把用户名、密码的信息放在请求的 Header 中</p>
+<blockquote>
+<p>2、Digest Auth</p>
+</blockquote>
+<p>要比Basic Auth复杂的多。使用当前填写的值生成authorization header。所以在生成header之前要确保设置的正确性。如果当前的header已经存在，postman会移除之前的header。</p>
+<blockquote>
+<p>3、OAuth 1.0</p>
+</blockquote>
+<p>postman的OAuth helper让你签署支持OAuth</p>
+<p>1.0基于身份验证的请求。OAuth不用获取access token,你需要去API提供者获取的。OAuth 1.0可以在header或者查询参数中设置value。</p>
+<blockquote>
+<p>4、OAuth 2.0</p>
+</blockquote>
+<p>postman支持获得OAuth 2.0 token并添加到requests中。</p>
+<blockquote>
+<p>————————————————<br>本文仅供本人学习使用，摘自CSDN博主「大痴小乙」的原创文章<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/fxbin123/article/details/80428216">https://blog.csdn.net/fxbin123/article/details/80428216</a></p>
+</blockquote>
 
                 
             </div>
@@ -417,7 +469,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://amazingtc.github.io/2022/10/12/Echart%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/">https://amazingtc.github.io/2022/10/12/Echart%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/</a>
+                    <a href="https://amazingtc.github.io/2022/10/15/Postman%E7%9A%84%E4%BD%BF%E7%94%A8/">https://amazingtc.github.io/2022/10/15/Postman%E7%9A%84%E4%BD%BF%E7%94%A8/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -648,13 +700,13 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2022/10/12/CSS%E6%A0%B7%E5%BC%8F%E8%A1%A8%E8%A7%84%E8%8C%83/">
+                <a href="/2022/10/16/TypeScript%E7%AC%94%E8%AE%B0/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="CSS样式表规范">
+                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="TypeScript学习笔记">
                         
-                        <span class="card-title">CSS样式表规范</span>
+                        <span class="card-title">TypeScript学习笔记</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -665,14 +717,14 @@
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2022-10-12
+                            <i class="far fa-clock fa-fw icon-date"></i>2022-10-16
                         </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/%E5%89%8D%E7%AB%AF%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83/" class="post-category">
-                                    前端代码规范
+                            <a href="/categories/%E5%89%8D%E7%AB%AF%E7%AC%94%E8%AE%B0%E6%95%B4%E5%90%88/" class="post-category">
+                                    前端笔记整合
                                 </a>
                             
                             
@@ -689,13 +741,13 @@
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2022/10/12/git%E4%B8%8Evim%E5%B8%B8%E8%A7%81%E6%8C%87%E4%BB%A4%E9%9B%86/">
+                <a href="/2022/10/14/Vue2%E7%AC%94%E8%AE%B0(%E9%83%A8%E5%88%86)/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="Git常用命令">
+                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="Vue2学习笔记">
                         
-                        <span class="card-title">Git常用命令</span>
+                        <span class="card-title">Vue2学习笔记</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -706,7 +758,7 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2022-10-12
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-10-14
                             </span>
                         <span class="publish-author">
                             
